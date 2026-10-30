@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 460" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f1117" />
+      <stop offset="100%" stop-color="#161b22" />
+    </linearGradient>
+    <linearGradient id="blueCard" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="boxShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.4" />
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#58a6ff" />
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#3fb950" />
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#bc8cff" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="940" height="460" rx="16" fill="url(#bg)" stroke="#30363d" stroke-width="1.5" />
+
+  <!-- Header -->
+  <text x="40" y="44" fill="#f0f6fc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700">Gloria Containers • Manifest V3 Emulated Isolation Architecture</text>
+  <text x="40" y="68" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12">RFC 6265 Cookie Jars + Declarative Net Request Session Rules + In-Memory Page Shim</text>
+
+  <!-- Container Tab Area -->
+  <g transform="translate(40, 96)">
+    <rect width="250" height="320" rx="12" fill="url(#blueCard)" stroke="#388bfd" stroke-width="2" filter="url(#boxShadow)" />
+    <!-- Header Badge -->
+    <rect x="16" y="16" width="110" height="24" rx="12" fill="#1f6feb" />
+    <text x="71" y="32" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="600" text-anchor="middle">CONTAINER TAB</text>
+    
+    <text x="20" y="68" fill="#f0f6fc" font-family="sans-serif" font-size="14" font-weight="600">Tab #12 (Work)</text>
+    <text x="20" y="88" fill="#8b949e" font-family="sans-serif" font-size="11">Bound via chrome.storage.session</text>
+
+    <!-- Sub-box: Page JS -->
+    <rect x="20" y="110" width="210" height="90" rx="8" fill="#161b22" stroke="#30363d" />
+    <text x="32" y="132" fill="#79c0ff" font-family="sans-serif" font-size="12" font-weight="600">MAIN World</text>
+    <text x="32" y="152" fill="#c9d1d9" font-family="monospace" font-size="11">document.cookie</text>
+    <text x="32" y="170" fill="#8b949e" font-family="sans-serif" font-size="10">getter &amp; setter intercepted</text>
+    <text x="32" y="186" fill="#8b949e" font-family="sans-serif" font-size="10">by docCookieShim.ts</text>
+
+    <!-- Sub-box: Isolated Relay -->
+    <rect x="20" y="215" width="210" height="80" rx="8" fill="#161b22" stroke="#30363d" />
+    <text x="32" y="237" fill="#d2a8ff" font-family="sans-serif" font-size="12" font-weight="600">ISOLATED World Relay</text>
+    <text x="32" y="257" fill="#8b949e" font-family="monospace" font-size="10">relay.iife.ts</text>
+    <text x="32" y="275" fill="#8b949e" font-family="sans-serif" font-size="10">Bridges DOM events ⇄ SW</text>
+  </g>
+
+  <!-- Middle: Extension Service Worker Engine -->
+  <g transform="translate(340, 96)">
+    <rect width="270" height="320" rx="12" fill="url(#blueCard)" stroke="#8957e5" stroke-width="2" filter="url(#boxShadow)" />
+    <!-- Header Badge -->
+    <rect x="16" y="16" width="140" height="24" rx="12" fill="#8957e5" />
+    <text x="86" y="32" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="600" text-anchor="middle">SERVICE WORKER</text>
+
+    <text x="20" y="68" fill="#f0f6fc" font-family="sans-serif" font-size="14" font-weight="600">Session Map &amp; Isolation</text>
+
+    <!-- Cookie Jar Engine -->
+    <rect x="20" y="90" width="230" height="100" rx="8" fill="#161b22" stroke="#30363d" />
+    <text x="32" y="112" fill="#bc8cff" font-family="sans-serif" font-size="12" font-weight="600">Tough-Cookie Jar</text>
+    <text x="32" y="130" fill="#8b949e" font-family="sans-serif" font-size="10">• Isolated RFC 6265 cookie jar</text>
+    <text x="32" y="146" fill="#8b949e" font-family="sans-serif" font-size="10">• Persisted in IndexedDB</text>
+    <text x="32" y="162" fill="#8b949e" font-family="sans-serif" font-size="10">• Atomic rule recompiler (compileRules)</text>
+    <text x="32" y="178" fill="#8b949e" font-family="sans-serif" font-size="10">• 999 rule IDs allocated per container</text>
+
+    <!-- DNR Controller -->
+    <rect x="20" y="202" width="230" height="98" rx="8" fill="#161b22" stroke="#30363d" />
+    <text x="32" y="224" fill="#3fb950" font-family="sans-serif" font-size="12" font-weight="600">declarativeNetRequest</text>
+    <text x="32" y="242" fill="#8b949e" font-family="sans-serif" font-size="10">• Base rule: strip default Cookie header</text>
+    <text x="32" y="258" fill="#8b949e" font-family="sans-serif" font-size="10">• Base rule: strip Set-Cookie from default store</text>
+    <text x="32" y="274" fill="#8b949e" font-family="sans-serif" font-size="10">• Priority rules: inject container Cookie</text>
+    <text x="32" y="290" fill="#8b949e" font-family="sans-serif" font-size="10">• Scoped strictly to tabId</text>
+  </g>
+
+  <!-- Right: Web Server / Remote -->
+  <g transform="translate(660, 96)">
+    <rect width="240" height="320" rx="12" fill="url(#blueCard)" stroke="#30363d" stroke-width="1.5" filter="url(#boxShadow)" />
+    <!-- Header Badge -->
+    <rect x="16" y="16" width="110" height="24" rx="12" fill="#21262d" stroke="#30363d" stroke-width="1" />
+    <text x="71" y="32" fill="#c9d1d9" font-family="sans-serif" font-size="11" font-weight="600" text-anchor="middle">WEB SERVER</text>
+
+    <text x="20" y="68" fill="#f0f6fc" font-family="sans-serif" font-size="14" font-weight="600">Destination Origin</text>
+    <text x="20" y="88" fill="#8b949e" font-family="sans-serif" font-size="11">https://example.com</text>
+
+    <!-- Outgoing Box -->
+    <rect x="20" y="115" width="200" height="75" rx="8" fill="#161b22" stroke="#30363d" />
+    <text x="30" y="138" fill="#58a6ff" font-family="sans-serif" font-size="11" font-weight="600">HTTP Request</text>
+    <text x="30" y="156" fill="#8b949e" font-family="sans-serif" font-size="10">Receives container's</text>
+    <text x="30" y="172" fill="#58a6ff" font-family="monospace" font-size="10">Cookie: session=work_xyz</text>
+
+    <!-- Incoming Box -->
+    <rect x="20" y="210" width="200" height="85" rx="8" fill="#161b22" stroke="#30363d" />
+    <text x="30" y="233" fill="#3fb950" font-family="sans-serif" font-size="11" font-weight="600">HTTP Response</text>
+    <text x="30" y="251" fill="#3fb950" font-family="monospace" font-size="10">Set-Cookie: auth=token</text>
+    <text x="30" y="269" fill="#8b949e" font-family="sans-serif" font-size="10">Captured by webRequest &amp;</text>
+    <text x="30" y="283" fill="#8b949e" font-family="sans-serif" font-size="10">stored in Work cookie jar</text>
+  </g>
+
+  <!-- Connectors & Arrows -->
+  <!-- Tab to SW (JS Relay) -->
+  <path d="M 230 255 L 340 255" fill="none" stroke="#bc8cff" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrowPurple)" />
+  
+  <!-- DNR to Request -->
+  <path d="M 610 152 L 660 152" fill="none" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrow)" />
+  
+  <!-- Server Response to Cookie Flow -->
+  <path d="M 660 252 L 610 252" fill="none" stroke="#3fb950" stroke-width="2" marker-end="url(#arrowGreen)" />
+</svg>
