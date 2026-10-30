@@ -1,0 +1,210 @@
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --fg: #1f1f1f;
+  --muted: #6b6b6b;
+  --line: #e3e3e3;
+  --hover: #f2f2f2;
+  --accent: #1a73e8;
+  --danger: #d93025;
+  font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #202124;
+    --fg: #e8eaed;
+    --muted: #9aa0a6;
+    --line: #3c4043;
+    --hover: #2d2e31;
+    --accent: #8ab4f8;
+    --danger: #f28b82;
+  }
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); }
+button, input { font: inherit; color: inherit; }
+
+.cicon { display: inline-block; flex: none; border-radius: 6px; object-fit: cover; }
+.cicon--letter {
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 600; border-radius: 50%;
+}
+
+.btn {
+  border: 1px solid var(--line); background: transparent; border-radius: 6px;
+  padding: 6px 10px; cursor: pointer;
+}
+.btn:hover { background: var(--hover); }
+.btn:disabled { opacity: 0.5; cursor: default; }
+.btn--primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.btn--primary:hover { background: var(--accent); filter: brightness(1.08); }
+.btn--danger { color: var(--danger); }
+.btn--ghost { border-color: transparent; }
+
+.input {
+  width: 100%; border: 1px solid var(--line); background: var(--bg);
+  border-radius: 6px; padding: 7px 9px;
+}
+.input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+.muted { color: var(--muted); }
+.error { color: var(--danger); font-size: 12px; }
+
+/* ---------- popup ---------- */
+.ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.btn { display: inline-flex; align-items: center; gap: 6px; }
+
+.pp { width: 360px; display: flex; flex-direction: column; }
+
+.pp-head {
+  display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.pp-head__none {
+  width: 28px; height: 28px; flex: none; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; border: 1.5px dashed var(--line); color: var(--muted);
+}
+.pp-head__text { flex: 1; display: grid; min-width: 0; }
+.pp-head__kicker { font-size: 11px; color: var(--muted); }
+.pp-head__name { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.icon-btn {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border: 0; border-radius: 6px; background: transparent;
+  color: var(--muted); cursor: pointer;
+}
+.icon-btn:hover { background: var(--hover); color: var(--fg); }
+.icon-btn:focus-visible, .ct__open:focus-visible, .bm__open:focus-visible, .bm__more:focus-visible, .chip:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: -2px;
+}
+
+.pp-section { padding: 10px 6px 6px; }
+.pp-section + .pp-section { border-top: 1px solid var(--line); }
+.pp-section__head { display: flex; align-items: baseline; justify-content: space-between; padding-right: 8px; }
+.pp-label {
+  margin: 0; padding: 0 8px 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--muted);
+}
+.pp-count { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.pp-empty { padding: 20px 16px; text-align: center; color: var(--muted); }
+.pp-empty p { margin: 0 0 12px; }
+
+/* containers */
+.ct-list, .bm-list { list-style: none; margin: 0; padding: 0; }
+.ct { display: flex; align-items: center; border-radius: 8px; }
+.ct:hover { background: var(--hover); }
+/* Accent-tinted pill: color-mix keeps it readable in both themes off the one --accent var. */
+.ct__badge {
+  flex: none; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 999px;
+  color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.ct__open {
+  flex: 1; display: flex; align-items: center; gap: 10px; min-width: 0; padding: 6px 8px;
+  border: 0; border-radius: 8px; background: transparent; text-align: left; cursor: pointer;
+}
+/* Action hints appear on hover/focus only, so the resting list stays clean. */
+.ct__hint {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 4px; flex: none;
+  font-size: 11px; color: var(--muted); opacity: 0; transition: opacity 0.12s;
+}
+.ct:hover .ct__hint, .ct__open:focus-visible .ct__hint { opacity: 1; }
+.ct__move { margin-right: 4px; }
+
+/* bookmarks */
+.pp-search {
+  display: flex; align-items: center; gap: 8px; margin: 0 8px 6px; padding: 0 10px;
+  border: 1px solid var(--line); border-radius: 8px; color: var(--muted); background: var(--bg);
+}
+.pp-search:focus-within { border-color: var(--accent); }
+.pp-search input {
+  flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; padding: 7px 0; color: var(--fg);
+}
+/* Bounded so a big bookmark collection scrolls inside the popup, keeping the footer in view. */
+.bm-list { max-height: 300px; overflow-y: auto; transition: opacity 0.1s; }
+.bm-list[aria-busy='true'] { opacity: 0.7; }
+.bm-empty { padding: 10px 8px; color: var(--muted); font-size: 12px; text-align: center; }
+.bm { border-radius: 8px; }
+.bm:hover, .bm:focus-within { background: var(--hover); }
+.bm__row { display: flex; align-items: center; gap: 10px; padding: 5px 6px 5px 8px; }
+.bm__fav { flex: none; width: 16px; height: 16px; }
+.bm__text { flex: 1; display: grid; min-width: 0; }
+.bm__title, .bm__sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bm__sub { font-size: 11px; color: var(--muted); }
+.bm__folder { opacity: 0.8; }
+.bm__actions { display: flex; align-items: center; gap: 2px; flex: none; }
+.bm__open, .bm__more {
+  display: inline-flex; align-items: center; justify-content: center; height: 26px; min-width: 26px;
+  border: 0; border-radius: 6px; background: transparent; cursor: pointer; padding: 0 4px;
+  /* Dimmed at rest, full strength on the hovered row: visible but not noisy. */
+  opacity: 0.55; transition: opacity 0.12s, background 0.12s;
+}
+.bm:hover .bm__open, .bm:hover .bm__more, .bm:focus-within .bm__open, .bm:focus-within .bm__more { opacity: 1; }
+.bm__open:hover, .bm__more:hover, .bm__more[aria-expanded='true'] { background: var(--line); }
+.bm__more { font-size: 11px; font-weight: 600; color: var(--muted); }
+.bm__pick { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 8px 8px 34px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 3px 10px 3px 4px;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--bg); cursor: pointer;
+}
+.chip:hover { border-color: var(--accent); }
+
+.pp-foot { border-top: 1px solid var(--line); padding: 6px; }
+.pp-foot .btn { color: var(--muted); }
+.pp-foot .btn:hover { color: var(--fg); }
+
+/* ---------- options ---------- */
+.options { max-width: 760px; margin: 0 auto; padding: 32px 24px 64px; }
+.options h1 { font-size: 22px; margin: 0 0 4px; }
+.options h2 { font-size: 15px; margin: 32px 0 12px; }
+.card { border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.form { display: grid; grid-template-columns: 136px 1fr; gap: 16px; align-items: start; }
+.form__fields { display: grid; gap: 12px; }
+.form__actions { display: flex; gap: 8px; }
+.label { display: grid; gap: 4px; font-weight: 500; }
+
+.swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+.swatch {
+  width: 24px; height: 24px; border-radius: 50%; border: 2px solid transparent; cursor: pointer;
+  padding: 0;
+}
+.swatch[aria-checked='true'] { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+.drop {
+  width: 136px; height: 136px; border: 1.5px dashed var(--line); border-radius: 10px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; position: relative; text-align: center; padding: 6px;
+}
+.drop:hover, .drop--over { border-color: var(--accent); background: var(--hover); }
+.drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.drop__sizes { display: flex; align-items: end; gap: 6px; }
+
+.list { display: grid; gap: 8px; }
+.item {
+  display: flex; align-items: center; gap: 12px; border: 1px solid var(--line);
+  border-radius: 10px; padding: 10px 12px;
+}
+.item__name { flex: 1; font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.qicon-wrap { flex: none; display: grid; justify-items: center; }
+.qicon { position: relative; display: block; border-radius: 10px; cursor: pointer; padding: 2px; }
+.qicon:hover, .qicon--over { outline: 2px solid var(--accent); outline-offset: 1px; }
+.qicon:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
+.qicon--busy { opacity: 0.6; cursor: progress; }
+/* Pencil badge only on hover: the list stays clean, but the icon reads as editable. */
+.qicon__badge {
+  position: absolute; right: -4px; bottom: -4px; width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 10px;
+  background: var(--accent); color: var(--bg); opacity: 0; transition: opacity 0.12s;
+}
+.qicon:hover .qicon__badge, .qicon--over .qicon__badge, .qicon--busy .qicon__badge, .qicon:focus-within .qicon__badge { opacity: 1; }
+/* Visually hidden but focusable, so the picker is keyboard-reachable via the label. */
+.qicon input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.qicon__error { max-width: 160px; margin: 4px 0 0; }
+.form__note { margin: 0; font-size: 12px; }
+.item__actions { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+
+.toggle { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+.toggle input { margin-top: 3px; }
+.toggle__hint { display: block; font-size: 12px; margin-top: 2px; }
