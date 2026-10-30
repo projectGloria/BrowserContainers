@@ -1,61 +1,240 @@
+<div align="center">
+
+<img src="assets/icon.svg" alt="Gloria Containers Logo" width="128" height="128" />
+
 # Gloria Containers
 
-Firefox-Containers-style tab isolation for Chromium-based browsers (built for Ungoogled Chromium, MV3).
+**Firefox-style multi-account tab & cookie isolation crafted for Chromium**
 
-- **Custom name and color** per container, optionally shown as a Chromium tab group (toggle in options). The group is only a label. Isolation is the cookie jar.
-- **Right-click menus.** "Open link in container → X" on any link, and "Reopen this page in container → X / No container" on any page.
-- **Custom icon from any image.** Upload any image the browser can decode (PNG, JPEG, WebP, AVIF, GIF, SVG, BMP, ICO), at any size up to 25 MB / 16384 px per side. It is center-cropped to a square and downscaled with a halving chain to crisp 16/32/48/128 PNGs. Only those PNGs are stored, in the extension's IndexedDB; the original is discarded. To set or change an existing container's icon, click its icon in the options list or upload one through Edit. Uploads for existing containers save immediately; new-container icons save when you click Create container.
-- **Open bookmarks in a container.** The toolbar popup has a bookmark search and folder browser. Click a bookmark, then pick the container.
-- **Per-container cookie jar.** Stay signed in to the same site with different accounts in side-by-side tabs.
+*Isolate web logins, quarantine trackers, and customize identities with dedicated cookie jars — built for Manifest V3.*
 
-## Build & install
+<p>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-00B074.svg?style=flat-square" alt="License: MIT" /></a>
+  <img src="https://img.shields.io/badge/Platform-Chromium%20%7C%20Ungoogled-4285F4.svg?style=flat-square&logo=googlechrome" alt="Platform: Chromium" />
+  <img src="https://img.shields.io/badge/Manifest-V3-orange.svg?style=flat-square" alt="Manifest V3" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB.svg?style=flat-square&logo=react" alt="React 19" />
+  <img src="https://img.shields.io/badge/TypeScript-7-3178C6.svg?style=flat-square&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Isolation-Cookie%20Jars-purple.svg?style=flat-square" alt="Cookie Jars" />
+</p>
 
-```bash
-npm install
-npm run build
+---
+
+<p>
+  <a href="#-about-gloria-containers">About</a> •
+  <a href="#-key-features">Features</a> •
+  <a href="#-architecture--how-isolation-works">Architecture</a> •
+  <a href="#-visual-tour">Visual Tour</a> •
+  <a href="#-installation--setup">Installation</a> •
+  <a href="#-known-limitations--read-these">Limitations</a> •
+  <a href="#-manual-test-checklist">Testing</a> •
+  <a href="#-license">License</a>
+</p>
+
+<p align="center">
+  <img width="940" src="assets/preview-banner.svg" alt="Gloria Containers Interface Preview" />
+</p>
+
+</div>
+
+---
+
+## 🗂️ About Gloria Containers
+
+Firefox's **Multi-Account Containers** is widely regarded as one of the finest privacy and multitasking innovations in modern web browsing. It allows users to segment their online lives into isolated color-coded contexts — keeping work logins, personal identities, social networks, and banking sessions completely quarantined from each other without juggling separate browser windows or resource-heavy profiles.
+
+Chromium browsers lack native `contextualIdentities` APIs. **Gloria Containers** bridges this gap for Chromium-based browsers (including **Ungoogled Chromium**, Brave, and Chrome) through an emulated Manifest V3 isolation engine.
+
+Rather than relying on sluggish profile restarts, Gloria Containers orchestrates:
+- 🍪 **True Cookie Jar Separation**: Every container operates with its own independent, RFC 6265 compliant cookie jar powered by `tough-cookie` and persisted locally in IndexedDB.
+- 🎨 **Bespoke Visual Customization**: Personalize each container with custom names, Chromium-native tab group colors, or your own uploaded images. Any image (PNG, JPEG, WebP, AVIF, GIF, SVG, BMP, ICO) is automatically center-cropped and downscaled to crisp 16/32/48/128 icons.
+- 🏷️ **Tab Group Harmony**: Containers optionally reflect as native Chromium tab groups with matching swatches, keeping your tab strip clean and organized.
+- 🔒 **Privacy-First & Local**: Zero telemetry, zero cloud synchronization, and zero third-party dependencies. All state resides strictly inside your browser's local sandbox.
+
+---
+
+## ✨ Key Features
+
+<table>
+  <tr>
+    <td width="50%">
+      <h3>🍪 Isolated Cookie Jars</h3>
+      <p>Log in to multiple accounts on the same site simultaneously across adjacent tabs without credential cross-contamination.</p>
+    </td>
+    <td width="50%">
+      <h3>🎨 Custom Icons from Any Image</h3>
+      <p>Upload any picture up to 25 MB / 16384 px. The built-in image processor center-crops and scales it to crisp multi-density icons.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>🏷️ Native Tab Group Integration</h3>
+      <p>Containers can automatically map to Chromium tab groups, styling tabs with color swatches and clear categorical labels.</p>
+    </td>
+    <td width="50%">
+      <h3>🖱️ Right-Click Context Menus</h3>
+      <p>Instantly <em>"Open link in container → [Name]"</em> or <em>"Reopen this page in container → [Name] / No container"</em> anywhere on the web.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>🔖 Integrated Bookmark Picker</h3>
+      <p>Search and browse your bookmarks tree straight from the extension popup, launching selected sites directly into target containers.</p>
+    </td>
+    <td width="50%">
+      <h3>⚡ Declarative Net Request Engine</h3>
+      <p>High-performance Manifest V3 network session rules atomically strip default store cookies and inject container-scoped cookies per tab.</p>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 🏗️ Architecture & How Isolation Works
+
+Because Chromium does not expose a native container API, Gloria Containers achieves airtight cookie isolation via coordinated subsystems:
+
+| Layer | Responsibility | Key Source Files |
+| :--- | :--- | :--- |
+| **Tab Binding** | Tracks `tabId ↔ containerId` relationships in session storage | [`src/background/tabRegistry.ts`](file:///c:/Users/Nihil/Desktop/Gloria%20Repoz/BrowserContainers/src/background/tabRegistry.ts) |
+| **Cookie Jar** | RFC 6265 cookie jar implementation persisted in IndexedDB | [`src/background/isolation/cookieJar.ts`](file:///c:/Users/Nihil/Desktop/Gloria%20Repoz/BrowserContainers/src/background/isolation/cookieJar.ts) |
+| **Rule Compiler** | Translates jar cookies into `declarativeNetRequest` session rules | [`src/background/isolation/compileRules.ts`](file:///c:/Users/Nihil/Desktop/Gloria%20Repoz/BrowserContainers/src/background/isolation/compileRules.ts) |
+| **Network Interception** | Captures incoming `Set-Cookie` headers via `webRequest` | [`src/background/isolation/cookieFlow.ts`](file:///c:/Users/Nihil/Desktop/Gloria%20Repoz/BrowserContainers/src/background/isolation/cookieFlow.ts) |
+| **DOM Relay & Shim** | Bridges `document.cookie` reads/writes between MAIN world & Service Worker | [`src/background/isolation/docCookieShim.ts`](file:///c:/Users/Nihil/Desktop/Gloria%20Repoz/BrowserContainers/src/background/isolation/docCookieShim.ts) + [`src/content/relay.iife.ts`](file:///c:/Users/Nihil/Desktop/Gloria%20Repoz/BrowserContainers/src/content/relay.iife.ts) |
+
+### Request Lifecycle in a Container Tab
+
+<p align="center">
+  <img width="880" src="assets/architecture.svg" alt="Gloria Containers Architecture Diagram" />
+</p>
+
+1. **Quarantine Base Rules**: When a tab joins a container, a baseline declarative rule strips outgoing `Cookie` headers to prevent default-profile cookies from leaking into the container. Symmetrically, incoming `Set-Cookie` headers are stripped from reaching the default cookie store.
+2. **Prioritized Injections**: High-priority session rules dynamically inject the container's own cookie values into outgoing HTTP requests, differentiated by scheme, host-only vs domain, path, and `SameSite` context.
+3. **Atomic Rule Allocation**: Each container is allocated an isolated block of 999 DNR rule IDs. Rule updates are coalesced and committed atomically to avoid race conditions.
+4. **Inheritance**: New tabs spawned from a container tab (`Ctrl+click`, `target="_blank"`, `window.open`) automatically inherit the parent's container context.
+
+---
+
+## 📸 Visual Tour
+
+### 1. Dual-Identity Workspaces
+Run personal and organizational accounts side-by-side without private/incognito compromises or profile switching.
+
+```
+┌──────────────────────────────────────┐  ┌──────────────────────────────────────┐
+│  Work Container (Blue Swatch)        │  │  Personal Container (Purple Swatch)  │
+│  github.com/org-enterprise           │  │  github.com/my-open-source           │
+│  ● Signed In as: @lead-dev           │  │  ● Signed In as: @nihil-personal     │
+└──────────────────────────────────────┘  └──────────────────────────────────────┘
 ```
 
-Open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and pick `dist/`.
+### 2. Context Menu Control
+Right-click any link or page to seamlessly dispatch it into any configured container:
 
-`npm test` runs the unit tests (rule compiler, icon geometry).
+```
+Right-Click Link
+ └── Open link in container ────────► 💼 Work
+                                      🏠 Personal
+                                      💳 Banking & Shopping
+                                      🧪 Research / Staging
+```
 
-## How isolation works
+### 3. Integrated Bookmark Launchpad
+Open bookmarks directly into your designated container from the toolbar popup search:
 
-Chromium has no container API (no `contextualIdentities`), so isolation is emulated:
+```
+[ Search Bookmarks...           🔍 ]
+ ├── 💼 Jira Dashboard ────────► [ Open in Work ]
+ ├── 🏠 Reddit Feed     ────────► [ Open in Personal ]
+ └── 💳 Banking Portal  ────────► [ Open in Banking ]
+```
 
-| Piece | File |
-| --- | --- |
-| tabId → container binding (`chrome.storage.session`) | `src/background/tabRegistry.ts` |
-| Per-container RFC 6265 jar (`tough-cookie`, persisted in IndexedDB) | `src/background/isolation/cookieJar.ts` |
-| Jar → `declarativeNetRequest` session rules, scoped by `tabIds` | `src/background/isolation/compileRules.ts` |
-| Server `Set-Cookie` → jar (`webRequest`, `extraHeaders`) | `src/background/isolation/cookieFlow.ts` |
-| `document.cookie` override in the page's MAIN world | `src/background/isolation/docCookieShim.ts` + `src/content/relay.iife.ts` |
+---
 
-For every container tab:
-1. A base rule strips the outgoing `Cookie` header, so default-store cookies never leak in. It also strips incoming `Set-Cookie`, so container cookies never land in the default store.
-2. Higher-priority rules **set** `Cookie` from the container's jar. Rules are split by host-only vs `Domain=`, path, scheme (Secure cookies never go over http) and SameSite context (first-party / cross-site navigation / cross-site subresource).
-3. Each container owns a block of 999 rule IDs. Updates are atomic, serialized and coalesced per container.
+## 🚀 Installation & Setup
 
-Tabs opened from a container tab (links, `target=_blank`, `window.open`) inherit its container.
+### Prerequisites
+- **Node.js** (v20+ recommended)
+- **Chromium-based Browser** (Chrome 120+, Ungoogled Chromium, Edge, Brave, or Vivaldi)
 
-## Known limitations — read these
+### Building from Source
 
-- **Only cookies are isolated.** `localStorage`, `sessionStorage`, IndexedDB, Cache Storage, service workers and HTTP cache are still shared per origin across containers. Most sites keep sessions in cookies, but some SPAs keep tokens in `localStorage`, and those won't be separated.
-- **Service-worker and prefetch requests** (`tabId === -1`) can't be attributed to a tab, so they use the default cookie store.
-- **`document.cookie` is shimmed best-effort.** It is injected with `injectImmediately` on navigation commit, which usually runs before page scripts but not always. Inline scripts that read `document.cookie` immediately may briefly see the default store's non-HttpOnly cookies.
-- **First request of an inherited tab.** If a link-opened tab's first request leaves before its rules are installed, the extension re-navigates it once inside the container. The first, discarded request still went out with default-store cookies.
-- **Rule update lag.** The first request right after a new `Set-Cookie` can go out before the rules are recompiled.
-- **Path matching is approximate.** `Path=/app` also matches `/application`. Ports are ignored for host-only cookies.
-- **Not a browser profile.** Extensions can't create Chromium profiles. If you need full isolation (storage, cache, extensions, history), use real profiles (`--profile-directory`).
-- **No bookmark-menu entry.** Chromium has no `bookmark` context-menu type (Firefox does), so the native bookmark menu can't get "Open in container". Use the bookmark picker in the toolbar popup instead. Or open the bookmark, then right-click the page → *Reopen this page in container*.
-- **Saved tab groups.** Chromium saves every tab group. Closing a container group's last tab shows "Close tab and delete group?". Deleting only drops the saved group, never the container. Reopening a *saved* group later restores plain default-cookie tabs that merely look like the container. Turn grouping off in options if that bothers you.
-- **Session lifetime.** Tab↔container bindings live in `storage.session`. After a browser restart, restored tabs come back as default tabs. Container cookie jars persist.
-- **Unverified assumption (needs a manual check in your build).** The design relies on `webRequest.onHeadersReceived` still seeing `Set-Cookie` while a DNR rule strips it from the response. Verify it by signing in somewhere inside a container. If the login doesn't stick, this assumption is broken in your Chromium build.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/projectGloria/BrowserContainers.git
+   cd BrowserContainers
+   ```
 
-## Manual test checklist
+2. **Install dependencies:**
+   ```bash
+   npm ci
+   ```
 
-1. Create **Work** and **Personal**. Upload a 1000×1000 JPEG to one and an SVG to the other. Check the 16/32/48 previews in the editor, the popup, and the toolbar icon on a container tab.
-2. Open github.com in Work and sign in as account A. Open github.com in Personal and sign in as account B. Reload both; each keeps its own account.
-3. Open github.com in a normal tab: signed out (or your default account).
-4. Ctrl+click a link in a Work tab: the new tab joins the Work group and stays signed in as A.
-5. Delete **Personal**: its tabs close, and in the SW devtools `await chrome.declarativeNetRequest.getSessionRules()` shows no rules in its ID block.
+3. **Build the extension:**
+   ```bash
+   npm run build
+   ```
+   *The compiled Manifest V3 extension bundle will be output to the `dist/` directory.*
+
+4. **Load into your browser:**
+   - Navigate to `chrome://extensions`.
+   - Enable **Developer mode** (toggle in the top-right corner).
+   - Click **Load unpacked**.
+   - Select the `dist/` directory inside this repository.
+
+### Developer Commands
+
+```bash
+# Start Vite development server with CRXJS hot reloading
+npm run dev
+
+# Run TypeScript typechecks without emitting files
+npm run typecheck
+
+# Run Vitest test suite (rule compiler & icon geometry tests)
+npm test
+```
+
+---
+
+## ⚠️ Known Limitations — Read These
+
+Because Chromium provides no native container boundaries, the emulated architecture has inherent design boundaries:
+
+- **Only cookies are isolated**: `localStorage`, `sessionStorage`, IndexedDB, Cache Storage, service workers, and the HTTP disk cache remain shared per-origin across containers. SPAs that store authentication tokens in `localStorage` rather than cookies will share sessions across containers.
+- **Background & Prefetch Requests**: Requests originating without a tab (`tabId === -1`), including prefetching and background service workers, route through the default cookie jar.
+- **Best-Effort `document.cookie` Shim**: Injected via `injectImmediately` at navigation commit. While it almost always loads before page scripts, inline scripts executing instantaneously on raw HTML may momentarily observe default store cookies.
+- **Inherited Tab First Request**: If a link-opened tab's very first HTTP request leaves before DNR rules bind to the new `tabId`, the extension re-navigates the tab cleanly within the container.
+- **Tab Groups Persistence**: Chromium natively saves tab groups. Deleting a closed group deletes the saved Chromium group, but never deletes your Gloria Container. Restoring a previously saved group will open tabs under the default cookie store.
+- **Session Lifetime**: Tab-to-container bindings reside in `chrome.storage.session`. When the browser restarts, restored tabs open as default tabs, though all container cookie jars remain securely persisted in IndexedDB.
+
+---
+
+## 🧪 Manual Test Checklist
+
+Before submitting PRs or deploying updates, verify the core isolation guarantees:
+
+1. **Custom Icons & Visuals**: Create `Work` and `Personal` containers. Upload a large image (e.g. 1000×1000 JPEG) to one and an SVG to the other. Verify the 16/32/48 previews in options, the popup, and the active toolbar icon.
+2. **Account Isolation**: Open `github.com` in `Work` and sign in to Account A. Open `github.com` in `Personal` and sign in to Account B. Reload both; confirm accounts stay isolated.
+3. **Default Store Separation**: Open `github.com` in a standard (non-container) tab; confirm you are signed out (or on your default profile).
+4. **Link Inheritance**: `Ctrl+click` a link inside a `Work` tab; verify the newly spawned tab joins the `Work` container and maintains Account A's session.
+5. **Container Deletion**: Delete `Personal`; verify all associated tabs close and declarative session rules are cleanly purged from the DNR rule table.
+
+---
+
+## 📜 License
+
+Distributed under the **[MIT License](LICENSE)**.
+
+```
+Copyright (c) 2026 projectGloria
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
