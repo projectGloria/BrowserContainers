@@ -1,3 +1,4 @@
 node_modules/
 dist/
 *.local
+[Dd]esktop.ini
